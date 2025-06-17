@@ -1,16 +1,6 @@
-name: Books Service CI/CD
-
-on:
-  push:
-    branches: [main]
-
-env:
-  DOCKER_USERNAME: rbutechnologies
-  IMAGE_NAME: books-service
-
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout source
@@ -22,16 +12,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven
-
       - name: Maven Build
-        run: |
-          mvn clean package -DskipTests
+        run: mvn clean package -DskipTests
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -41,9 +23,11 @@ jobs:
 
       - name: Build & Push Docker Image
         run: |
-          docker build -t $DOCKER_USERNAME/$IMAGE_NAME:latest .
-          docker push $DOCKER_USERNAME/$IMAGE_NAME:latest
+          docker build -t $env:DOCKER_USERNAME/$env:IMAGE_NAME:latest .
+          docker push $env:DOCKER_USERNAME/$env:IMAGE_NAME:latest
+
       - name: Deploy to Minikube
+        shell: powershell
         run: |
           kubectl config use-context minikube
           kubectl apply -f k8s/books-deployment.yaml
