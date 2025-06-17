@@ -43,3 +43,9 @@ jobs:
         run: |
           docker build -t $DOCKER_USERNAME/$IMAGE_NAME:latest .
           docker push $DOCKER_USERNAME/$IMAGE_NAME:latest
+      - name: Deploy to Minikube
+        run: |
+          kubectl config use-context minikube
+          kubectl apply -f k8s/books-deployment.yaml
+          kubectl apply -f k8s/books-service.yaml
+          kubectl rollout status deployment/books-deployment
