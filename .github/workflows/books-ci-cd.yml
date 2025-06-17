@@ -39,6 +39,7 @@ jobs:
       run: |
         mvn sonar:sonar \
           -Dsonar.projectKey=books-service \
+          -Dsonar.organization=rbuecomproject  
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=$SONAR_TOKEN
 
