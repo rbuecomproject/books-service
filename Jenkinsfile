@@ -1,42 +1,37 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    GIT_CREDENTIALS_ID = 'github-token'     // Jenkins credential ID for GitHub PAT
-  }
-
-  stages {
-    stage('Checkout Code') {
-      steps {
-        git credentialsId: "${GIT_CREDENTIALS_ID}",
-            url: 'https://github.com/rbuecomproject/books-service.git',
-            branch: 'main'
-      }
+    environment {
+        DOCKER_USERNAME = 'rbutechnologies'
+        IMAGE_NAME = 'books-service'
     }
 
-    stage('Build') {
-      steps {
-        sh 'mvn clean package -DskipTests'
-      }
-    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git credentialsId: 'github-token', url: 'https://github.com/rbuecomproject/books-service.git'
+            }
+        }
 
-    stage('Docker Build & Push') {
-      steps {
-        sh '''
-        docker build -t rbutechnologies/books-service:latest .
-        docker push rbutechnologies/books-service:latest
-        '''
-      }
-    }
+        stage('Build') {
+            steps {
+                bat 'mvn clean package -DskipTests'
+            }
+        }
 
-    stage('Deploy to Minikube') {
-      steps {
-        sh '''
-        kubectl config use-context minikube
-        kubectl apply -f k8s/books-deployment.yaml
-        kubectl rollout status deployment/books-deployment
-        '''
-      }
+        stage('Docker Build & Push') {
+            steps {
+                bat "docker build -t %DOCKER_USERNAME%/%IMAGE_NAME%:latest ."
+                bat "docker push %DOCKER_USERNAME%/%IMAGE_NAME%:latest"
+            }
+        }
+
+        stage('Deploy to Minikube') {
+            steps {
+                bat 'kubectl config use-context minikube'
+                bat 'kubectl apply -f k8s/books-deployment.yaml'
+                bat 'kubectl rollout status deployment/books-deployment'
+            }
+        }
     }
-  }
 }
