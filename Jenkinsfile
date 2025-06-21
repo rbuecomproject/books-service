@@ -8,10 +8,12 @@ pipeline {
 
     stages {
         stage('Checkout Code') {
-            steps {
-                git credentialsId: 'github-token', url: 'https://github.com/rbuecomproject/books-service.git'
-            }
-        }
+			steps {
+				git branch: 'main', 
+				credentialsId: 'github-token', 
+				url: 'https://github.com/rbuecomproject/books-service.git'
+				  }
+			}
 
         stage('Build') {
             steps {
