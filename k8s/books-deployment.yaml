@@ -7,7 +7,7 @@ spec:
   ports:
     - port: 9292
       targetPort: 9292
-      nodePort: 30095
+      nodePort: 30096
   selector:
     app: books-dp
 ---
