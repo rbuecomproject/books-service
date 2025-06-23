@@ -9,24 +9,24 @@ spec:
       targetPort: 9292
       nodePort: 30095
   selector:
-    app: books
+    app: books-dp
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: books
+  name: books-dp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: books
+      app: books-dp
   template:
     metadata:
       labels:
-        app: books
+        app: books-dp
     spec:
       containers:
-        - name: books
+        - name: books-dp
           image: rbutechnologies/books-service:latest
           ports:
             - containerPort: 9292

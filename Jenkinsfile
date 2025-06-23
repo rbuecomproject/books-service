@@ -32,7 +32,7 @@ pipeline {
             steps {
                 bat 'kubectl config use-context minikube'
                 bat 'kubectl apply -f k8s/books-deployment.yaml'
-                bat 'kubectl rollout status deployment/books'
+                bat 'kubectl rollout status deployment/books-dp'
             }
         }
     }
